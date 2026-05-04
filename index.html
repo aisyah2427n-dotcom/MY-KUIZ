@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis HTML Pinky Craft - XI RPL 1 🐾</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink-soft: #ffeef2;
+            --pink-main: #ff85a1;
+            --pink-shadow: #fbc2eb;
+            --white: #ffffff;
+        }
+
+        body { 
+            background-color: var(--pink-soft); 
+            font-family: 'Press Start 2P', cursive; 
+            color: var(--pink-main); 
+            text-align: center; 
+            padding: 30px 10px; 
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .cat-gif { 
+            width: 120px; 
+            margin-bottom: 10px; 
+            image-rendering: pixelated;
+        }
+
+        .container { 
+            background: var(--white); 
+            border: 6px solid var(--pink-main); 
+            padding: 25px; 
+            box-shadow: 10px 10px 0 var(--pink-shadow); 
+            display: inline-block; 
+            width: 95%; 
+            max-width: 600px; 
+        }
+
+        .progress-container { 
+            width: 100%; 
+            height: 20px; 
+            background: #ffe4e1; 
+            border: 3px solid var(--pink-main); 
+            margin: 20px 0; 
+        }
+
+        .progress-fill { 
+            height: 100%; 
+            background: var(--pink-main); 
+            width: 0%; 
+            transition: 0.5s ease-in-out; 
+        }
+
+        .btn-mc { 
+            background: var(--white); 
+            border: 4px solid var(--pink-main); 
+            color: var(--pink-main); 
+            padding: 15px; 
+            font-size: 10px; 
+            margin: 8px; 
+            width: 45%; 
+            cursor: pointer; 
+            font-family: 'Press Start 2P'; 
+            transition: 0.1s;
+            box-sizing: border-box;
+        }
+
+        .btn-mc:hover { 
+            background: var(--pink-main); 
+            color: var(--white); 
+            transform: translateY(-3px);
+        }
+
+        .hidden { display: none; }
+        
+        h2 { font-size: 14px; text-shadow: 2px 2px var(--pink-shadow); line-height: 1.5; }
+        
+        .score-big { font-size: 40px; margin: 20px 0; color: #ff4d94; }
+
+        @media (max-width: 500px) {
+            .btn-mc { width: 95%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animasi Kucing -->
+    <img src="https://media.tenor.com/zbe_Y9_8W6AAAAAj/cat-dance.gif" class="cat-gif" alt="Dancing Cat">
+
+    <div id="game-screen">
+        <h2>SELAMAT MENGERJAKAN</h2>
+        <div class="container">
+            <div id="round-text" style="font-size: 10px;">LEVEL: 1 / 20</div>
+            <div class="progress-container">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+
+            <div id="question-text" style="font-size: 11px; line-height: 1.8; margin: 25px 0; color: #555; min-height: 60px;">
+                Memuat Tantangan...
+            </div>
+
+            <div id="options-box">
+                <!-- Tombol pilihan dimunculkan di sini -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen Hasil -->
+    <div id="result-screen" class="hidden">
+        <div class="container">
+            <h1>TAMAT! 🐾</h1>
+            <hr color="#ff85a1" style="border: 2px solid">
+            <div style="margin: 20px 0; font-size: 12px;">
+                <p>BENAR: <span id="res-benar">0</span></p>
+                <p>SALAH: <span id="res-salah">0</span></p>
+            </div>
+            <div class="score-big" id="res-skor">0</div>
+            <button class="btn-mc" onclick="location.reload()" style="width: auto; padding: 15px 30px;">[ ULANGI ]</button>
+        </div>
+    </div>
+
+    <!-- Audio Kemenangan -->
+    <audio id="sfx-win">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const soalList = [
+            {q: "Tag untuk judul paling besar?", a: "<h6>", b: "<head>", c: "<h1>", d: "<header>", k: "c"},
+            {q: "Tag untuk baris baru (enter)?", a: "<br>", b: "<lb>", c: "<hr>", d: "<break>", k: "a"},
+            {q: "Tag untuk membuat link/tautan?", a: "<link>", b: "<a>", c: "<href>", d: "<url>", k: "b"},
+            {q: "Atribut sumber gambar <img>?", a: "href", b: "alt", c: "src", d: "link", k: "c"},
+            {q: "Tag daftar berurutan (1,2,3)?", a: "<ul>", b: "<li>", c: "<list>", d: "<ol>", k: "d"},
+            {q: "Tag pembungkus utama konten?", a: "<head>", b: "<body>", c: "<html>", d: "<section>", k: "b"},
+            {q: "Tag untuk membuat teks tebal?", a: "<b>", b: "<bold>", c: "<strong>", d: "<heavy>", k: "a"},
+            {q: "Tag untuk membuat tabel?", a: "<tr>", b: "<td>", c: "<table>", d: "<tab>", k: "c"},
+            {q: "Ekstensi file dokumen HTML?", a: ".css", b: ".php", c: ".ht", d: ".html", k: "d"},
+            {q: "Tag untuk judul tab browser?", a: "<head>", b: "<title>", c: "<meta>", d: "<name>", k: "b"},
+            {q: "Tag untuk membuat input teks?", a: "<input>", b: "<text>", c: "<enter>", d: "<box>", k: "a"},
+            {q: "Tag komentar di HTML?", a: "//", b: "/* */", c: "<!-- -->", d: "#", k: "c"},
+            {q: "Tag daftar poin (bullet)?", a: "<ul>", b: "<ol>", c: "<li>", d: "<bullet>", k: "a"},
+            {q: "Simbol untuk menutup tag?", a: "<", b: "/", c: "!", d: "?", k: "b"},
+            {q: "Tag untuk teks miring?", a: "<i>", b: "<m>", c: "<it>", d: "<italic>", k: "a"},
+            {q: "Atribut buka link di tab baru?", a: "_blank", b: "new", c: "href", d: "open", k: "a"},
+            {q: "Tag menyisipkan CSS internal?", a: "<script>", b: "<css>", c: "<style>", d: "<link>", k: "c"},
+            {q: "Kepanjangan HTML?", a: "Hyper Text Markup Language", b: "High Text", c: "Hyper Tool", d: "Home Tool", k: "a"},
+            {q: "Tag untuk garis horizontal?", a: "<line>", b: "<hr>", c: "<br>", d: "<border>", k: "b"},
+            {q: "Tag baris dalam tabel?", a: "<td>", b: "<th>", c: "<row>", d: "<tr>", k: "d"}
+        ];
+
+        let indexSekarang = 0;
+        let skorBenar = 0;
+
+        function tampilkanSoal() {
+            const dataSoal = soalList[indexSekarang];
+            document.getElementById('round-text').innerText = `LEVEL: ${indexSekarang + 1} / 20`;
+            document.getElementById('progress-fill').style.width = `${((indexSekarang + 1) / 20) * 100}%`;
+            document.getElementById('question-text').innerText = dataSoal.q;
+
+            const htmlTombol = `
+                <button class="btn-mc" onclick="jawab('a')">A. ${dataSoal.a}</button>
+                <button class="btn-mc" onclick="jawab('b')">B. ${dataSoal.b}</button>
+                <button class="btn-mc" onclick="jawab('c')">C. ${dataSoal.c}</button>
+                <button class="btn-mc" onclick="jawab('d')">D. ${dataSoal.d}</button>
+            `;
+            document.getElementById('options-box').innerHTML = htmlTombol;
+        }
+
+        window.jawab = function(pilihan) {
+            if (pilihan === soalList[indexSekarang].k) {
+                skorBenar++;
+                alert("YEYY! BENAR ✨");
+            } else {
+                alert("OH NO! SALAH 😿");
+            }
+
+            indexSekarang++;
+            if (indexSekarang < soalList.length) {
+                tampilkanSoal();
+            } else {
+                selesai();
+            }
+        }
+
+        function selesai() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('res-benar').innerText = skorBenar;
+            document.getElementById('res-salah').innerText = 20 - skorBenar;
+            document.getElementById('res-skor').innerText = (skorBenar / 20) * 100;
+            document.getElementById('sfx-win').play();
+        }
+
+        // Jalankan soal pertama
+        tampilkanSoal();
+    </script>
+</body>
+</html>
